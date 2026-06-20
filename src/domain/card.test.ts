@@ -24,6 +24,17 @@ describe('card state machine', () => {
     expect(assigneeForState('in-testing')).toBe('critic');
     expect(assigneeForState('todo')).toBe('scout');
   });
+
+  it('maps boundary states to their assignees', () => {
+    expect(assigneeForState('backlog')).toBe('scout');
+    expect(assigneeForState('done')).toBe('human');
+    expect(assigneeForState('wont-do')).toBe('human');
+  });
+
+  it('treats done as terminal', () => {
+    expect(canTransition('done', 'in-testing')).toBe(false);
+    expect(canTransition('done', 'todo')).toBe(false);
+  });
 });
 
 describe('appendLog', () => {
@@ -35,6 +46,12 @@ describe('appendLog', () => {
 
   it('creates a Log section when absent', () => {
     expect(appendLog('## Story\nhi', 'first')).toContain('## Log\n- first');
+  });
+
+  it('appends into an empty Log section before the next heading', () => {
+    const out = appendLog('## Log\n\n## Achievement', 'first entry');
+    expect(out).toContain('## Log\n- first entry');
+    expect(out.indexOf('## Achievement')).toBeGreaterThan(out.indexOf('first entry'));
   });
 });
 

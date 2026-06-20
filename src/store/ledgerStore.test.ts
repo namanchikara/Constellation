@@ -66,4 +66,21 @@ describe('ledger', () => {
     expect(content).toContain('(+)');
     expect(content).toContain('a useful fact');
   });
+
+  it('marks negative entries with (-) in the index', () => {
+    writeLedgerEntry(
+      root,
+      buildLedgerEntry({
+        name: 'deadend',
+        description: 'client-side gen OOMs past 100k rows',
+        polarity: 'negative',
+        achievement: 'in-browser export OOMs',
+        purpose: 'attempting client-side export',
+        proof: 'tab crash at 120k rows',
+      }),
+    );
+    const content = regenerateLedgerIndex(root);
+    expect(content).toContain('deadend');
+    expect(content).toContain('(-)');
+  });
 });

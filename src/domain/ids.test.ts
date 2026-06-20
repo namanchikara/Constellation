@@ -17,4 +17,8 @@ describe('ids', () => {
   it('ignores malformed ids when computing the max', () => {
     expect(nextId(['_index', 'garbage', '0002-x'], 'New')).toBe('0003-new');
   });
+
+  it('ignores ids whose prefix is not exactly four digits', () => {
+    expect(nextId(['0007abc-foo', '0002-x'], 'New')).toBe('0003-new');
+  });
 });

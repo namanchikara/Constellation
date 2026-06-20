@@ -9,8 +9,9 @@ export function slugify(text: string): string {
 
 export function nextId(existingIds: string[], title: string): string {
   const max = existingIds
-    .map((id) => parseInt(id.split('-')[0], 10))
-    .filter((n) => !Number.isNaN(n))
+    .map((id) => id.split('-')[0])
+    .filter((prefix) => /^\d{4}$/.test(prefix))
+    .map((prefix) => parseInt(prefix, 10))
     .reduce((acc, n) => Math.max(acc, n), 0);
   const seq = String(max + 1).padStart(4, '0');
   return `${seq}-${slugify(title)}`;

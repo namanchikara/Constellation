@@ -13,7 +13,8 @@ export function parseFrontmatter<T>(raw: string): FrontmatterFile<T> {
 }
 
 export function serializeFrontmatter<T extends object>(file: FrontmatterFile<T>): string {
-  return matter.stringify(`${file.content.trim()}\n`, file.data as Record<string, unknown>);
+  const data = JSON.parse(JSON.stringify(file.data)) as Record<string, unknown>;
+  return matter.stringify(`${file.content.trim()}\n`, data);
 }
 
 export function readFrontmatterFile<T>(path: string): FrontmatterFile<T> {

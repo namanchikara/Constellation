@@ -1,0 +1,22 @@
+{
+  "name": "constellation",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": { "constellation": "./dist/cli.js" },
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc",
+    "cli": "tsx src/cli.ts"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "gray-matter": "^4.0.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.0",
+    "@types/node": "^20.16.0"
+  }
+}

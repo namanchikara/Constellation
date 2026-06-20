@@ -12,9 +12,12 @@ export function parseFrontmatter<T>(raw: string): FrontmatterFile<T> {
   return { data: parsed.data as T, content: parsed.content.trim() };
 }
 
+function stripUndefined<T extends object>(obj: T): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined));
+}
+
 export function serializeFrontmatter<T extends object>(file: FrontmatterFile<T>): string {
-  const data = JSON.parse(JSON.stringify(file.data)) as Record<string, unknown>;
-  return matter.stringify(`${file.content.trim()}\n`, data);
+  return matter.stringify(`${file.content.trim()}\n`, stripUndefined(file.data));
 }
 
 export function readFrontmatterFile<T>(path: string): FrontmatterFile<T> {

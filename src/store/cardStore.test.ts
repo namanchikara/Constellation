@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { listCardIds, readCard, createCard, moveCardInStore } from './cardStore.js';
@@ -42,5 +42,16 @@ describe('cardStore', () => {
 
   it('returns an empty list when the board does not exist', () => {
     expect(listCardIds(root)).toEqual([]);
+  });
+
+  it('excludes _index.md from the card list', () => {
+    createCard(root, { story: 'Real card', acceptanceCriteria: [] });
+    // simulate an index file present in the board dir
+    writeFileSync(join(root, '.constellation', 'board', '_index.md'), '# Board\n');
+    expect(listCardIds(root)).toEqual(['0001-real-card']);
+  });
+
+  it('throws when reading a card that does not exist', () => {
+    expect(() => readCard(root, '9999-missing')).toThrow();
   });
 });

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { mkdtempSync, rmSync, existsSync } from 'node:fs';
+import { mkdtempSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { run } from './cli.js';
@@ -27,6 +27,7 @@ describe('cli', () => {
   it('creates, moves, and completes a card end-to-end', () => {
     cli('card', 'create', '--story', 'Export CSV', '--ac', 'has headers');
     expect(logs.join('\n')).toContain('0001-export-csv');
+    expect(readFileSync(indexPath(boardDir(root)), 'utf8')).toContain('0001-export-csv');
 
     cli('card', 'move', '0001-export-csv', 'todo');
     cli('card', 'move', '0001-export-csv', 'in-progress');

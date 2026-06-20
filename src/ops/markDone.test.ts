@@ -50,6 +50,12 @@ describe('markDone', () => {
     );
   });
 
+  it('writes no ledger entry when the card is not in testing', () => {
+    const c = createCard(root, { story: 'x', acceptanceCriteria: [] });
+    expect(() => markDone(root, c.data.id, { achievement: 'a', proof: 'p' })).toThrow(/illegal transition/);
+    expect(listLedgerNames(root)).toEqual([]);
+  });
+
   it('supports negative-polarity (dead-end) achievements', () => {
     const id = intoTesting();
     const { entry } = markDone(root, id, {

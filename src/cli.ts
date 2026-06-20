@@ -32,6 +32,7 @@ export function run(argv: string[], root: string): void {
         plan: opts.plan,
         gravity: opts.gravity,
       });
+      regenerateCardIndex(root);
       console.log(`created ${c.data.id} [${c.data.state}]`);
     }));
 
@@ -40,6 +41,7 @@ export function run(argv: string[], root: string): void {
     .action((id: string, state: string) => ok(() => {
       if (!CARD_STATES.includes(state as CardState)) throw new Error(`unknown state: ${state}`);
       const c = moveCardInStore(root, id, state as CardState);
+      regenerateCardIndex(root);
       console.log(`${c.data.id} → ${c.data.state} (${c.data.assignee})`);
     }));
 
@@ -67,6 +69,7 @@ export function run(argv: string[], root: string): void {
   const plan = program.command('plan');
   plan.command('create').requiredOption('--problem <text>').action((opts) => ok(() => {
     const p = createPlan(root, { problem: opts.problem });
+    regeneratePlanIndex(root);
     console.log(`created ${p.data.id} [${p.data.status}]`);
   }));
 

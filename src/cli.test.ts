@@ -32,6 +32,7 @@ describe('cli', () => {
     cli('card', 'move', '0001-export-csv', 'in-progress');
     cli('card', 'move', '0001-export-csv', 'in-testing');
     cli('card', 'done', '0001-export-csv', '--achievement', 'works', '--proof', 'criteria pass');
+    expect(existsSync(join(root, '.constellation', 'ledger', '0001-export-csv-achievement.md'))).toBe(true);
 
     cli('index');
     expect(existsSync(indexPath(boardDir(root)))).toBe(true);

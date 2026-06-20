@@ -12,8 +12,8 @@ export function markDone(
   input: DoneInput,
 ): { card: FrontmatterFile<CardFrontmatter>; entry: FrontmatterFile<LedgerFrontmatter> } {
   const entry = projectDone(readCard(root, id), input);
-  const card = moveCardInStore(root, id, 'done');
   writeLedgerEntry(root, entry);
+  const card = moveCardInStore(root, id, 'done');
   regenerateCardIndex(root);
   regenerateLedgerIndex(root);
   return { card, entry };

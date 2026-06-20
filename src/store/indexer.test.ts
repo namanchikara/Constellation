@@ -14,6 +14,10 @@ describe('renderIndex', () => {
     ]);
     expect(out).toBe('# Board\n\n- a\n- b\n');
   });
+
+  it('renders just the title when there are no rows', () => {
+    expect(renderIndex('Board', [])).toBe('# Board\n');
+  });
 });
 
 describe('firstLineOfSection', () => {
@@ -42,5 +46,11 @@ describe('regenerateCardIndex', () => {
     expect(content).toContain('[todo]');
     expect(content).toContain('Export CSV');
     expect(readFileSync(indexPath(boardDir(root)), 'utf8')).toBe(content);
+  });
+
+  it('includes the assignee in the index line', () => {
+    const c = createCard(root, { story: 'Export CSV', acceptanceCriteria: [] });
+    const content = regenerateCardIndex(root);
+    expect(content).toContain('(scout)');
   });
 });

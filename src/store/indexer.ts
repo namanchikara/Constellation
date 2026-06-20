@@ -9,6 +9,7 @@ export interface IndexRow {
 
 export function renderIndex(title: string, rows: IndexRow[]): string {
   const sorted = [...rows].sort((a, b) => a.sortKey.localeCompare(b.sortKey));
+  if (sorted.length === 0) return `# ${title}\n`;
   const body = sorted.map((r) => `- ${r.line}`).join('\n');
   return `# ${title}\n\n${body}\n`;
 }

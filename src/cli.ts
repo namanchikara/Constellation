@@ -1,5 +1,7 @@
+#!/usr/bin/env node
 import { Command, Option } from 'commander';
 import { fileURLToPath } from 'node:url';
+import { realpathSync } from 'node:fs';
 import { createCard, moveCardInStore, listCardIds, readCard } from './store/cardStore.js';
 import { createPlan } from './store/planStore.js';
 import { markDone } from './ops/markDone.js';
@@ -87,7 +89,11 @@ export function run(argv: string[], root: string): void {
   }
 }
 
-const isEntry = process.argv[1] === fileURLToPath(import.meta.url);
-if (isEntry) {
+// Resolve symlinks on both sides so the entry check holds when invoked via a
+// linked bin (e.g. `npm link` puts a symlink on PATH whose path differs from
+// the real dist/cli.js that import.meta.url reports).
+const selfPath = realpathSync(fileURLToPath(import.meta.url));
+const invokedPath = process.argv[1] ? realpathSync(process.argv[1]) : '';
+if (invokedPath === selfPath) {
   run(process.argv, process.cwd());
 }

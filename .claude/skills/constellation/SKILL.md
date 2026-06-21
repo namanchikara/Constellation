@@ -1,13 +1,13 @@
 ---
 name: constellation
-description: Orchestrate the Constellation agent team to work a problem through the "stay with reality" loop. Invoke when the human brings a new problem or asks "should we build X?". Currently drives Scout (problem verification); Maker and Critic are added in later slices.
+description: Orchestrate the Constellation agent team to work a problem through the "stay with reality" loop. Invoke when the human brings a new problem or asks "should we build X?". Drives Scout (verify the problem), then Maker (propose an approach for sign-off, then build it). Critic is added in a later slice.
 ---
 
 # Constellation orchestrator
 
 You are the **orchestrator** and the **board scheduler**. You run in the main thread, so you are the only one who talks to the human. The agents are headless subagents; they return structured results, and you relay between them and the human. You also own the **kill-switches** — you are allowed to stop the loop.
 
-**Scope of this slice:** Scout only — verify the problem before anything is built. Do not build a solution; that is Maker's job, added later. The terminal state of this slice is a *verified-problem plan on the board* OR a recorded "not real — don't build."
+**Scope:** Scout (verify the problem) → human gate → Maker (propose approach → human sign-off → build, card by card). Critic's refutation gate (`in-testing → done`) is a later slice. **The agents operate on a TARGET PROJECT directory that you pass them** — the project whose board holds the verified plan, not necessarily Constellation itself. Their constitutions live in the Constellation install; their work and board live in the target project.
 
 ## The board
 
@@ -43,6 +43,13 @@ digraph { rankdir=LR;
 - **Don't pre-answer for the human.** If Scout asks the human something, ask the human — don't fill it in from your priors.
 - **Don't soften a `not_real`** into a "well, maybe we could…". Report it straight.
 
+## Maker stage (after a verified plan exists)
+
+1. **Dispatch Maker in PROPOSE mode** — tell it the TARGET PROJECT directory and the verified plan id. It returns an `APPROACH + ALTERNATIVES + DECOMPOSITION` and **builds nothing**.
+2. **Relay the proposal to the human as a sign-off gate** — present the approach, the alternatives it ruled out, the proposed step-work cards, and the constraints it will honor. The human can approve, change scope, or kill. (This is "right product / product right" at the *solution* altitude.)
+3. **On sign-off, dispatch Maker in BUILD mode** — it creates the approved cards and moves them through `in-progress`, implementing minimally in the target project, ending each at `in-testing` (ready for Critic). It does **not** mark cards `done`.
+4. **Constraint guard / kill-switch:** if Maker returns `blocked` (a hard constraint it can't honor, or the problem looks mis-framed), do **not** tell it to override the constraint. Bring it back to the human — and if the *problem* itself is wrong, back to Scout.
+
 ## Growing this skill
 
-Later slices add: dispatch **Maker** (build solution Y for a verified plan, moving cards through `in-progress`), then **Critic** (refute, in `in-testing`, decorrelated by framing + model + the nightmare dream), with the board columns as the gates and `card done` projecting verified achievements to the ledger.
+The next slice adds **Critic**: refute Maker's output in `in-testing`, decorrelated by adversarial framing + a different model + the nightmare dream. Only Critic's gate moves a card to `done`, projecting a verified achievement to the ledger.
